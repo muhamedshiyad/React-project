@@ -7,7 +7,9 @@ dotenv.config();
 
 const app = express();
 
-app.get("/products", async (req, res) => {
+app.use(express.json());
+
+app.post("/api/products", async (req, res) => {
     const product = req.body;
 
     if(!product.name || !product.price || !product.image){
@@ -25,6 +27,16 @@ app.get("/products", async (req, res) => {
     }
 });
 
+app.delete("/api/products/:id",async (req, res) => {
+    const {id} = req.params
+
+   try {
+    await Product.findByIdAndDelete(id);
+    res.status(200).json({sucess: true,message:"Product deleted successfully"});
+   } catch (error) {
+    res.status(404).json({sucess: false, message:"product not found"});
+   }
+});
 
 app.listen(5000, () => {
     connctDB();
